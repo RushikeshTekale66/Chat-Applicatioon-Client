@@ -5,8 +5,8 @@ import Form from './modules/Form/index';
 function App() {
   return (
     <div className=" bg-[#cce2e6] h-screen flex justify-center items-center">
-      <Form/>
-      {/* <Dashboard/> */}
+      {/* <Form/> */}
+      <Dashboard/>
     </div>
   );
 }
