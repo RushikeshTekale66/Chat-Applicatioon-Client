@@ -37,7 +37,7 @@ const Dashboard = () => {
         }
     ]
     return (
-        <div className=' w-screen flex'>
+        <div className=' w-screen bg-[#cce2e6] h-screen flex justify-center items-center'>
 
             {/* First Section */}
             <div className=' w-[25%] h-screen bg-secondary'>
