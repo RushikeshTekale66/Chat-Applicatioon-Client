@@ -1,41 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '../../Assets/profile.jpg'
 import CallImg from '../../Assets/call.jpg';
 import Input from '../../Components/Inputs/index'
 
 const Dashboard = () => {
-    const contacts = [
-        {
-            name: 'John',
-            status: 'Available',
-            img: Avatar
-        },
-        {
-            name: 'Rushikesh',
-            status: 'Available',
-            img: Avatar
-        },
-        {
-            name: 'Amar',
-            status: 'Available',
-            img: Avatar
-        },
-        {
-            name: 'Vaibhav',
-            status: 'Available',
-            img: Avatar
-        },
-        {
-            name: 'Vaishnav',
-            status: 'Available',
-            img: Avatar
-        },
-        {
-            name: 'Akash',
-            status: 'Available',
-            img: Avatar
-        }
-    ]
+    
+    useEffect(()=>{
+        const loggedInUser = JSON.parse(localStorage.getItem('user:detail'))
+        const fetchConversations = async()=>{
+            const res = await fetch(`http://localhost:8000/api/conversations/${loggedInUser?.id}`,{
+            method:'GET',
+            headers:{
+                'Content-Type':'application/json'
+            },
+        })
+        const resData = await res.json();
+        // console.log(resData);
+        setConversations(resData);
+    }
+    fetchConversations();
+},[])
+
+    const [user, setUser]= useState(JSON.parse(localStorage.getItem('user:detail')))
+    // console.log(user);
+
+    const [conversations, setConversations] = useState([]);
+
     return (
         <div className=' w-screen bg-[#cce2e6] h-screen flex justify-center items-center'>
 
@@ -46,7 +36,7 @@ const Dashboard = () => {
                 <div className=' flex items-center my-8 mx-8'>
                     <div className=' border border-primary bg-secondary p-[8px] rounded-full' ><img src={Avatar} width={70} height={70} alt='profile image' /></div>
                     <div className=' ml-8'>
-                        <h3 className=' text-2xl'>Chat Application</h3>
+                        <h3 className=' text-2xl'>{user.fullName}</h3>
                         <p className=' text-lg font-light'>My Account</p>
                     </div>
                 </div>
@@ -56,13 +46,13 @@ const Dashboard = () => {
                 <div className=' mx-14 mt-10'>
                     <div className=' text-primary text-lg'>Messages</div>
                     {
-                        contacts.map(({ name, status, img }) => {
+                        conversations.map(({ conversationId, user }) => {
                             return (
                                 <div className=' flex items-center py-8 border-b border-b-gray-300 cursor-pointer'>
-                                    <div className=''><img src={img} width={60} height={60} alt='profile image' /></div>
+                                    <div className=''><img src={Avatar} width={60} height={60} alt='profile image' /></div>
                                     <div className=' ml-6'>
-                                        <h3 className=' text-lg font-semibold'>{name}</h3>
-                                        <p className=' text-sm text-gray-600 font-light'>{status}</p>
+                                        <h3 className=' text-lg font-semibold'>{user.fullName}</h3>
+                                        <p className=' text-sm text-gray-600 font-light'>{user.email}</p>
                                     </div>
                                 </div>
                             )
