@@ -3,15 +3,23 @@ import Avatar from '../../Assets/profile.jpg'
 import CallImg from '../../Assets/call.jpg';
 import Input from '../../Components/Inputs/index'
 
+
 const Dashboard = () => {
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user:detail')));
     const [conversations, setConversations] = useState([]);
     const [messages, setMessages] = useState({});
     const [message, setMessage] = useState('');
+    const [users, setUsers] = useState([]);
+
+    console.log("User : ", user);
+    console.log("Conversations : ", conversations);
+    console.log("Messages: ", messages);
+    console.log("Message: ", message);
+    console.log("Users: " , users);
 
     useEffect(() => {
-        const loggedInUser = JSON.parse(localStorage.getItem('user:detail'))
+        const loggedInUser = JSON.parse(localStorage.getItem('user:detail'));
         const fetchConversations = async () => {
             const res = await fetch(`http://localhost:8000/api/conversations/${loggedInUser?.id}`, {
                 method: 'GET',
@@ -20,41 +28,55 @@ const Dashboard = () => {
                 },
             })
             const resData = await res.json();
-            // console.log(resData);
+            console.log("Hi", resData);
             setConversations(resData);
         }
         fetchConversations();
     }, [])
 
+    useEffect(()=>{
+        const fetchUsers = async() =>{
+            const res = await fetch(`http://localhost:8000/api/users/${user?.id}`,{
+                method:"GET",
+                headers:{
+                    'Content-Type':'application/json',
+                }
+            });
+            const resData = await res.json();
+            setUsers(resData);
+        }
+        fetchUsers();
+    }, [])
 
-
-    const fetchMessages = async (conversationId, user) => {
-        const res = await fetch(`http://localhost:8000/api/messages/${conversationId}`, {
-            method: "get",
+    const fetchMessages = async (conversationId, receiver) => {
+        const res = await fetch(`http://localhost:8000/api/messages/${conversationId}?senderId= ${user?.id}&&receiverId=${receiver?.receiverId}`, {
+            method: 'GET',
+            // ...(conversationId === 'new' && {
+            //     body: JSON.stringify({senderId: user?.id, receiverId: messages?.receiver?.receiverId})
+            // }),
             headers: {
                 'Content-Type': 'application/json',
             }
         })
         const resData = await res.json();
         console.log(resData);
-        setMessages({ messages: resData, receiver: user, conversationId });
+        setMessages({ messages: resData, receiver, conversationId });
     }
 
     const sendMessage = async (e)=>{
+        console.log("Send Message = > ", message, messages?.conversationId, user?.id, messages?.receiver?.receiverId);
             const res = await fetch(`http://localhost:8000/api/message`,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
-                body: JSON.stringify({
-                    conversationId:messages?.conversationId?._id,
+                body:JSON.stringify({
+                    conversationId:messages?.conversationId,
                     senderId:user?.id,
                     message,
                     receiverId : messages?.receiver?.receiverId
                 })
             })
-            // const resData = await res.json();
-            // console.log(resData);
             setMessage('');
     }
 
@@ -78,7 +100,7 @@ const Dashboard = () => {
                 <div className=' mx-14 mt-10'>
                     <div className=' text-primary text-lg'>Messages</div>
                     {
-                        conversations.length > 0 ?
+                        conversations.length>0?
                             conversations.map(({ conversationId, user }) => {
                                 return (
                                     <div className=' flex items-center py-8 border-b border-b-gray-300 cursor-pointer'>
@@ -101,7 +123,6 @@ const Dashboard = () => {
             <div className=' w-[50%] h-screen bg-white flex flex-col items-center '>
 
                 {/* Title */}
-
                 {
                     messages?.receiver?.fullName &&
                     <div className='w-[75%] bg-secondary h-[80px] my-14 rounded-full flex  items-center px-14'>
@@ -116,16 +137,13 @@ const Dashboard = () => {
                     </div>
                 }
                 
-
-
-
                 {/* Chatting */}
                 <div className='h-[75%] w-full overflow-scroll shadow-lg'>
                     <div className=' p-14'>
                         {
                             messages?.messages?.length > 0 ?
                                 messages.messages.map(({ message, user: { id } = {} }) => {
-                                    if (id === user?.id) {
+                                    if (id !== user?.id) {
                                         return (
                                             <div className=' max-w-[40%] bg-secondary rounded-b-lg rounded-tr-xl p-4 mb-6'>{message}</div>
                                         )
@@ -142,7 +160,6 @@ const Dashboard = () => {
                 </div>
 
                 {/* Text box */}
-
                 {
                     messages?.receiver?.fullName && 
                     <div className=' w-full p-14 flex items-center'>
@@ -177,7 +194,28 @@ const Dashboard = () => {
 
             {/* Third Section */}
 
-            <div className=' w-[25%] border bg-light h-screen'></div>
+            <div className=' w-[25%] border bg-light h-screen'>
+                <div className = ' text-primary text-lg px-10 py-20'>Contacts</div>
+                <div className=' text-primary text-lg mx-14 mt-10'>
+                {
+                        users.length > 0 ?
+                            users.map(({ userId, user }) => {
+                                return (
+                                    <div className=' flex items-center py-8 border-b border-b-gray-300 cursor-pointer'>
+                                        <div className='cursor-pointer flex items-center' onClick={() => fetchMessages('new', user)}>
+                                            <div className=''><img src={Avatar} width={60} height={60} alt='profile image' /></div>
+                                            <div className=' ml-6'>
+                                                <h3 className=' text-lg font-semibold'>{user.fullName}</h3>
+                                                <p className=' text-sm text-gray-600 font-light'>{user.email}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                            : <div className=' text-center text-lg font-semibold my-auto mt-24'>No People till</div>
+                    }
+                    </div>
+            </div>
         </div>
     )
 }
