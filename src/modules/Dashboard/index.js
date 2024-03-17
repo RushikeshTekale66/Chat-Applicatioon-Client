@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Avatar from '../../Assets/profile.jpg'
 import CallImg from '../../Assets/call.jpg';
 import Input from '../../Components/Inputs/index';
@@ -13,6 +13,12 @@ const Dashboard = () => {
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState([]);
     const [socket, setSocket] = useState(null);
+
+    const messageRef = useRef(null);
+
+    useEffect(()=>{
+        messageRef?.current?.scrollIntoView({behavior:'smooth'});
+    }, [messages?.messages])
 
     // console.log("User : ", user);
     // console.log("Conversations : ", conversations);
@@ -109,10 +115,10 @@ const Dashboard = () => {
     }
 
     return (
-        <div className=' w-screen bg-[#cce2e6] h-screen flex justify-center items-center'>
+        <div className=' w-screen bg-[#cce2e6] h-screen flex justify-center items-center '>
 
             {/* First Section */}
-            <div className=' w-[25%] h-screen bg-secondary'>
+            <div className=' w-[25%] h-screen bg-secondary overflow-scroll'>
 
                 {/* Profile */}
                 <div className=' flex items-center my-8 mx-8'>
@@ -125,7 +131,7 @@ const Dashboard = () => {
                 <hr />
 
                 {/* All contact messages */}
-                <div className=' mx-14 mt-10'>
+                <div className=' mx-14 mt-10' >
                     <div className=' text-primary text-lg'>Messages</div>
                     {
                         conversations.length > 0 ?
@@ -169,20 +175,19 @@ const Dashboard = () => {
                 <div className='h-[75%] w-full overflow-scroll shadow-lg'>
                     <div className=' p-14'>
                         {
-                            messages?.messages?.length > 0 ?
-                                messages.messages.map(({ message, user: { id } = {} }) => {
-                                    if (id !== user?.id) {
-                                        return (
-                                            <div className=' max-w-[40%] bg-secondary rounded-b-lg rounded-tr-xl p-4 mb-6'>{message}</div>
-                                        )
-                                    }
-                                    else {
-                                        return (
-                                            <div className='max-w-[40%] bg-primary rounded-b-xl rounded-tl-xl ml-auto p-4 text-white mb-6'>{message}</div>
-                                        )
-                                    }
-                                }) : <div className='text-center text-lg font-semibold mt-24'>Start conversations</div>
+                        messages?.messages?.length > 0 ?
+                            messages.messages.map(({ message, user: { id } = {} }) => {
+
+                                return (
+                                    <>
+                                        <div className={`max-w-[40%] rounded-b-xl  p-4 mb-6 ${id===user?.id ? ' bg-primary text-white rounded-tl-xl ml-auto' :'bg-secondary rounded-tr-xl '}`}>{message}</div>
+                                        <div ref={messageRef}></div>
+                                    </>
+                                )
+                            })
+                            : <div className='text-center text-lg font-semibold mt-24'>Start conversations</div>
                         }
+
                     </div>
 
                 </div>
@@ -222,7 +227,7 @@ const Dashboard = () => {
 
             {/* Third Section */}
 
-            <div className=' w-[25%] border bg-light h-screen'>
+            <div className=' w-[25%] border bg-light h-screen overflow-scroll'>
                 <div className=' text-primary text-lg px-10 py-20'>Contacts</div>
                 <div className=' text-primary text-lg mx-14 mt-10'>
                     {
