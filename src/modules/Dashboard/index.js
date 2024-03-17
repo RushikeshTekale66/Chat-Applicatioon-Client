@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Avatar from '../../Assets/profile.jpg'
+import Avatar from '../../Assets/Profile2.png'
 import CallImg from '../../Assets/call.jpg';
 import Input from '../../Components/Inputs/index';
 import { io } from 'socket.io-client';
@@ -121,10 +121,10 @@ const Dashboard = () => {
             <div className=' w-[25%] h-screen bg-secondary overflow-scroll'>
 
                 {/* Profile */}
-                <div className=' flex items-center my-8 mx-8'>
-                    <div className=' border border-primary bg-secondary p-[8px] rounded-full' ><img src={Avatar} width={70} height={70} alt='profile image' /></div>
+                <div className=' flex items-center bg-gray-200 rounded-xl p-3'>
+                    <div className=' border border-primary bg-secondary p-[8px] rounded-lg' ><img src={Avatar} width={70} height={70} alt='profile image' /></div>
                     <div className=' ml-8'>
-                        <h3 className=' text-2xl'>{user.fullName}</h3>
+                        <h3 className=' text-2xl font-semibold'>{user.fullName}</h3>
                         <p className=' text-lg font-light'>My Account</p>
                     </div>
                 </div>
@@ -132,7 +132,7 @@ const Dashboard = () => {
 
                 {/* All contact messages */}
                 <div className=' mx-14 mt-10' >
-                    <div className=' text-primary text-lg'>Messages</div>
+                    <div className=' font-bold text-2xl'>Messages</div>
                     {
                         conversations.length > 0 ?
                             conversations.map(({ conversationId, user }) => {
@@ -159,7 +159,7 @@ const Dashboard = () => {
                 {/* Title */}
                 {
                     messages?.receiver?.fullName &&
-                    <div className='w-[75%] bg-secondary h-[80px] my-14 rounded-full flex  items-center px-14'>
+                    <div className='w-[80%]  h-[80px] bg-secondary my-10 rounded-full flex  items-center px-14'>
                         <div className=' cursor-pointer' ><img src={Avatar} width={50} height={50} alt='profile image' /></div>
                         <div className=' ml-6 mr-auto'>
                             <h3 className=' text-lg'>{messages?.receiver?.fullName}</h3>
@@ -172,7 +172,7 @@ const Dashboard = () => {
                 }
 
                 {/* Chatting */}
-                <div className='h-[75%] w-full overflow-scroll shadow-lg'>
+                <div className={`${(messages?.receiver?.fullName)?'h-[75%]':'h-[100%]'} w-full overflow-scroll shadow-lg`}>
                     <div className=' p-14'>
                         {
                         messages?.messages?.length > 0 ?
@@ -185,7 +185,7 @@ const Dashboard = () => {
                                     </>
                                 )
                             })
-                            : <div className='text-center text-lg font-semibold mt-24'>Start conversations</div>
+                            : <div className='text-center text-3xl font-semibold m-auto'>Start conversations</div>
                         }
 
                     </div>
@@ -195,7 +195,7 @@ const Dashboard = () => {
                 {/* Text box */}
                 {
                     messages?.receiver?.fullName &&
-                    <div className=' w-full p-14 flex items-center'>
+                    <div className=' w-full p-5 flex items-center'>
 
                         {/* Type Text */}
                         <Input placeholder="Type message..." value={message} onChange={(e) => setMessage(e.target.value)} className=' w-full' inputClassName='p-4 px-4 border-0 shadow-md rounded-full bg-light focus:ring-0 focus:border-0 outline-none' />
@@ -227,9 +227,9 @@ const Dashboard = () => {
 
             {/* Third Section */}
 
-            <div className=' w-[25%] border bg-light h-screen overflow-scroll'>
-                <div className=' text-primary text-lg px-10 py-20'>Contacts</div>
-                <div className=' text-primary text-lg mx-14 mt-10'>
+            <div className=' w-[25%] border bg-secondary h-screen overflow-scroll'>
+                <div className=' text-primary font-extrabold px-20 text-3xl pt-10'>Contact List</div>
+                <div className=' text-primary text-lg mx-14 mt-1'>
                     {
                         users.length > 0 ?
                             users.map(({ userId, user }) => {
