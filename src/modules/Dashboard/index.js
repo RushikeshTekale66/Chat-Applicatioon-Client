@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {useNavigate } from "react-router-dom";
 import Avatar from '../../Assets/Profile2.png'
 import CallImg from '../../Assets/call.jpg';
 import Input from '../../Components/Inputs/index';
@@ -15,6 +16,14 @@ const Dashboard = () => {
     const [socket, setSocket] = useState(null);
 
     const messageRef = useRef(null);
+
+    const auth = localStorage.getItem('user');
+    const navigate = useNavigate();
+
+    const logout = () => {
+        localStorage.clear();
+        navigate("/users/sign_in");
+    }
 
     useEffect(()=>{
         messageRef?.current?.scrollIntoView({behavior:'smooth'});
@@ -114,6 +123,8 @@ const Dashboard = () => {
         setMessage('');
     }
 
+    
+
     return (
         <div className=' w-screen bg-[#cce2e6] h-screen flex justify-center items-center '>
 
@@ -126,6 +137,7 @@ const Dashboard = () => {
                     <div className=' ml-8'>
                         <h3 className=' text-2xl font-semibold'>{user.fullName}</h3>
                         <p className=' text-lg font-light'>My Account</p>
+                        <button className=' font-bold text-red-600' onClick={logout}>Log Out</button>
                     </div>
                 </div>
                 <hr />
