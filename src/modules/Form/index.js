@@ -33,6 +33,7 @@ const Form = ({
       alert("Invalid Credentials")
     }
     else {
+      alert(`${isSignPage?'Login Successfully':'Go to Sign_in Page'}`)
       const resData = await res.json();
       // console.log(resData);
       if (resData.token) {
